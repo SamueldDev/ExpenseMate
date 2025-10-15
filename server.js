@@ -6,14 +6,22 @@ dotenv.config({ quiet: true })
 import cors from "cors"
 import connectDB from "./config/db.js"
 
+import userRoutes from "./routes/userRoutes.js"
+
 
 const PORT = process.env.PORT || 5000
 const app = express();
 connectDB();  
 
 app.use(cors());
-app.use(express.json());   
+app.use(express.json());     
 
+// routes
+app.get("/", (req, res) => {    
+    res.send(" expenseMate server is live")
+})
+
+app.use("/api/users", userRoutes)   
 
 app.listen(PORT, () => {
     console.log(`server running on http://localhost:${PORT}`)
