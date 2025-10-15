@@ -1,0 +1,177 @@
+
+import Transaction from "../models/TransactionModel.js";
+import Budget from "../models/BudgetModel.js";  
+import mongoose from "mongoose";
+
+
+// add a transaction
+export const addTransaction = async (req, res) => {
+    const { title, amount, category, date, note, budgetId } = req.body;
+    const userId = req.user.id;
+    try {
+        const newTransaction = new Transaction({
+            user: userId,
+            budget: budgetId,
+            title,
+            amount,
+            category,
+            date,
+            note
+        });
+        await newTransaction.save();
+
+        // if budgetId is provided, update the spent_amount in the corresponding budget
+        if (budgetId) {
+            const budget = await Budget.findById(budgetId);
+            if (budget) {
+                budget.spent_amount += amount;
+                await budget.save();
+            }
+        }
+        res.status(201).json({
+            message: "Transaction added successfully",
+            transaction: newTransaction
+        });
+    }
+    catch (err) {
+        res.status(500).json({ message: "Failed to add transaction", error: err.message });
+    }
+};
+
+
+// get all transactions for a user
+export const getTransactions = async (req, res) => {
+    const userId = req.user.id;
+    try {
+        const transactions = await Transaction.find({ user: userId }).sort({ date: -1 });
+        res.status(200).json({ message: "Transactions fetched successfully", transactions });
+    } catch (err) {
+        res.status(500).json({ message: "Failed to fetch transactions", error: err.message });
+    }
+};
+
+
+// delete a transaction
+export const deleteTransaction = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user.id;
+    try {
+        const transaction = await Transaction.findOneAndDelete({ _id: id, user: userId });
+        if (!transaction) {
+            return res.status(404).json({ message: "Transaction not found" });
+        }
+
+        // if the transaction is linked to a budget, update the spent_amount in the corresponding budget
+        if (transaction.budget) {
+            const budget = await Budget.findById(transaction.budget);
+            if (budget) {
+                budget.spent_amount -= transaction.amount;
+                await budget.save();
+            }
+        }
+        res.status(200).json({ message: "Transaction deleted successfully" });
+    } catch (err) { 
+        res.status(500).json({ message: "Failed to delete transaction", error: err.message });
+    }
+};
+
+
+// update a transaction
+export const updateTransaction = async (req, res) => {
+    const { id } = req.params;
+    const { title, amount, category, date, note, budgetId } = req.body;
+    const userId = req.user.id;
+    try {
+        const transaction = await Transaction.findOne({ _id: id, user: userId });
+        if (!transaction) {
+            return res.status(404).json({ message: "Transaction not found" });
+        }
+
+
+        // if the transaction is linked to a budget, update the spent_amount in the corresponding budget
+        if (transaction.budget) {
+            const budget = await Budget.findById(transaction.budget);
+            if (budget) {
+                budget.spent_amount -= transaction.amount; // subtract the old amount
+                await budget.save();
+            }
+        }
+        transaction.title = title || transaction.title;
+        transaction.amount = amount || transaction.amount;
+        transaction.category = category || transaction.category;
+        transaction.date = date || transaction.date;
+        transaction.note = note || transaction.note;
+        transaction.budget = budgetId || transaction.budget;
+        await transaction.save();
+
+        // if budgetId is provided, update the spent_amount in the corresponding budget
+        if (budgetId) {
+            const budget = await Budget.findById(budgetId);
+            if (budget) {
+                budget.spent_amount += transaction.amount; // add the new amount
+                await budget.save();
+            }
+        }
+        res.status(200).json({
+            message: "Transaction updated successfully",
+            transaction
+        });
+    }
+    catch (err) {
+        res.status(500).json({ message: "Failed to update transaction", error: err.message });
+    }
+};
+
+
+// get a single transaction
+export const getTransaction = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user.id;
+    try {
+        const transaction = await Transaction.findOne({ _id: id, user: userId });
+        if (!transaction) {
+            return res.status(404).json({ message: "Transaction not found" });
+        }
+        res.status(200).json({ message: "Transaction fetched successfully", transaction });
+    } catch (err) {
+        res.status(500).json({ message: "Failed to fetch transaction", error: err.message });
+    }
+};
+
+
+// get transactions by budget
+export const getTransactionsByBudget = async (req, res) => {
+    const { budgetId } = req.params;
+    const userId = req.user.id;
+    try {
+        const transactions = await Transaction.find({ budget: budgetId, user: userId }).sort({ date: -1 });
+        res.status(200).json({ message: "Transactions fetched successfully", transactions });
+    }
+    catch (err) {
+        res.status(500).json({ message: "Failed to fetch transactions", error: err.message });
+    }
+};
+
+
+
+// get transactions summary (total income and total expense)
+export const getTransactionsSummary = async (req, res) => {
+    const userId = req.user.id;
+    try {
+        const incomeAgg = await Transaction.aggregate([
+            { $match: { user: mongoose.Types.ObjectId(userId), title: "income" } },
+            { $group: { _id: null, totalIncome: { $sum: "$amount" } } }
+        ]);
+        const expenseAgg = await Transaction.aggregate([
+            { $match: { user: mongoose.Types.ObjectId(userId), title: "expense" } },
+            { $group: { _id: null, totalExpense: { $sum: "$amount" } } }
+        ]);
+        const totalIncome = incomeAgg[0] ? incomeAgg[0].totalIncome : 0;
+        const totalExpense = expenseAgg[0] ? expenseAgg[0].totalExpense : 0;
+        res.status(200).json({ message: "Summary fetched successfully", summary: { totalIncome, totalExpense } });
+    }
+    catch (err) {
+        res.status(500).json({ message: "Failed to fetch summary", error: err.message });
+    }
+};
+

@@ -7,6 +7,8 @@ import cors from "cors"
 import connectDB from "./config/db.js"
 
 import userRoutes from "./routes/userRoutes.js"
+import budgetRoutes from "./routes/budgetRoutes.js"
+import transactionRoutes from "./routes/transactionRoutes.js"
 
 
 const PORT = process.env.PORT || 5000
@@ -18,10 +20,13 @@ app.use(express.json());
 
 // routes
 app.get("/", (req, res) => {    
-    res.send(" expenseMate server is live")
+    res.send(" expenseMate server is live")  
 })
 
-app.use("/api/users", userRoutes)   
+app.use("/api/users", userRoutes)       
+app.use("/api", budgetRoutes) 
+app.use("/api", transactionRoutes) 
+
 
 app.listen(PORT, () => {
     console.log(`server running on http://localhost:${PORT}`)

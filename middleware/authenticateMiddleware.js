@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config({ quiet: true })
 
-export const protectAction = (req, res, next) => {
+export const protectedAction = (req, res, next) => {
     const {authorization} = req.headers;
 
     if(!authorization){

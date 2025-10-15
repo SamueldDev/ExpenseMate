@@ -1,0 +1,378 @@
+
+
+// api calls
+
+
+// for transaction
+
+🧩 1. Add a Transaction
+Endpoint
+POST /api/transactions
+
+Request Headers
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+
+Request Body Example
+{
+  "title": "Groceries",
+  "amount": 12000,
+  "category": "Food",
+  "date": "2025-10-10",
+  "note": "Bought food items",
+  "budgetId": "6719fdcc11a9f02b3a745d20"
+}
+
+Expected Response (201 Created)
+{
+  "message": "Transaction added successfully",
+  "transaction": {
+    "_id": "671a00b511a9f02b3a745d31",
+    "user": "6719fb2011a9f02b3a745d15",
+    "budget": "6719fdcc11a9f02b3a745d20",
+    "title": "Groceries",
+    "amount": 12000,
+    "category": "Food",
+    "date": "2025-10-10T00:00:00.000Z",
+    "note": "Bought food items",
+    "__v": 0
+  }
+}
+
+
+🧩 2. Get All Transactions
+Endpoint
+GET /api/transactions
+
+Expected Response (200 OK)
+{
+  "message": "Transactions fetched successfully",
+  "transactions": [
+    {
+      "_id": "671a00b511a9f02b3a745d31",
+      "title": "Groceries",
+      "amount": 12000,
+      "category": "Food",
+      "date": "2025-10-10T00:00:00.000Z",
+      "note": "Bought food items",
+      "budget": "6719fdcc11a9f02b3a745d20"
+    },
+    {
+      "_id": "671a01f611a9f02b3a745d48",
+      "title": "Electricity Bill",
+      "amount": 5000,
+      "category": "Utilities",
+      "date": "2025-10-09T00:00:00.000Z",
+      "note": "PHCN recharge"
+    }
+  ]
+}
+
+
+🧩 3. Get a Single Transaction
+Endpoint
+GET /api/transactions/:id
+
+Example
+GET /api/transactions/671a00b511a9f02b3a745d31
+
+Expected Response (200 OK)
+{
+  "message": "Transaction fetched successfully",
+  "transaction": {
+    "_id": "671a00b511a9f02b3a745d31",
+    "title": "Groceries",
+    "amount": 12000,
+    "category": "Food",
+    "date": "2025-10-10T00:00:00.000Z",
+    "note": "Bought food items",
+    "budget": "6719fdcc11a9f02b3a745d20"
+  }
+}
+
+If transaction doesn’t exist:
+{
+  "message": "Transaction not found"
+}
+
+
+🧩 4. Update a Transaction
+Endpoint
+PUT /api/transactions/:id
+
+Example
+PUT /api/transactions/671a00b511a9f02b3a745d31
+
+Request Body Example
+{
+  "title": "Supermarket Shopping",
+  "amount": 13000,
+  "category": "Food",
+  "note": "Updated grocery expense",
+  "budgetId": "6719fdcc11a9f02b3a745d20"
+}
+
+Expected Response (200 OK)
+{
+  "message": "Transaction updated successfully",
+  "transaction": {
+    "_id": "671a00b511a9f02b3a745d31",
+    "title": "Supermarket Shopping",
+    "amount": 13000,
+    "category": "Food",
+    "date": "2025-10-10T00:00:00.000Z",
+    "note": "Updated grocery expense",
+    "budget": "6719fdcc11a9f02b3a745d20"
+  }
+}
+
+
+🧩 5. Delete a Transaction
+Endpoint
+DELETE /api/transactions/:id
+
+Example
+DELETE /api/transactions/671a00b511a9f02b3a745d31
+
+Expected Response (200 OK)
+{
+  "message": "Transaction deleted successfully"
+}
+
+If transaction doesn’t exist:
+{
+  "message": "Transaction not found"
+}
+
+
+🧩 6. Get Transactions by Budget
+Endpoint
+GET /api/transactions/budget/:budgetId
+
+Example
+GET /api/transactions/budget/6719fdcc11a9f02b3a745d20
+
+Expected Response (200 OK)
+{
+  "message": "Transactions fetched successfully",
+  "transactions": [
+    {
+      "_id": "671a00b511a9f02b3a745d31",
+      "title": "Groceries",
+      "amount": 12000,
+      "category": "Food",
+      "date": "2025-10-10T00:00:00.000Z",
+      "note": "Bought food items"
+    },
+    {
+      "_id": "671a08b611a9f02b3a745d7b",
+      "title": "Snacks",
+      "amount": 2000,
+      "category": "Food",
+      "date": "2025-10-12T00:00:00.000Z"
+    }
+  ]
+}
+
+
+🧩 7. Get Transaction Summary
+Endpoint
+GET /api/transactions/summary
+
+Expected Response (200 OK)
+{
+  "message": "Summary fetched successfully",
+  "summary": {
+    "totalIncome": 80000,
+    "totalExpense": 45000
+  }
+}
+
+If no transactions yet:
+{
+  "message": "Summary fetched successfully",
+  "summary": {
+    "totalIncome": 0,
+    "totalExpense": 0
+  }
+}
+
+
+
+
+// for budget
+📍 Endpoint
+POST /api/budgets
+
+📤 Request Body Example
+{
+  "name": "October Groceries",
+  "total_amount": 50000,
+  "limit_amount": 45000,
+  "start_date": "2025-10-01",
+  "end_date": "2025-10-31"
+}
+
+📥 Expected Response
+{
+  "message": "Budget created successfully",
+  "budget": {
+    "_id": "671a2ac8d5f212b4b731aa7e",
+    "user": "671a1fd8d5f212b4b731aa3c",
+    "name": "October Groceries",
+    "total_amount": 50000,
+    "limit_amount": 45000,
+    "spent_amount": 0,
+    "start_date": "2025-10-01T00:00:00.000Z",
+    "end_date": "2025-10-31T00:00:00.000Z",
+    "createdAt": "2025-10-15T15:00:00.000Z",
+    "updatedAt": "2025-10-15T15:00:00.000Z",
+    "__v": 0
+  }
+}
+
+
+
+ What it does:
+ Fetches all budgets belonging to the authenticated user, newest first.
+
+📍 Endpoint
+GET /api/budgets
+
+📥 Expected Response
+{
+  "message": "Budgets fetched successfully",
+  "budgets": [
+    {
+      "_id": "671a2ac8d5f212b4b731aa7e",
+      "name": "October Groceries",
+      "total_amount": 50000,
+      "limit_amount": 45000,
+      "spent_amount": 20000
+    },
+    {
+      "_id": "671a2d58d5f212b4b731aa93",
+      "name": "Transportation",
+      "total_amount": 30000,
+      "limit_amount": 25000,
+      "spent_amount": 15000
+    }
+  ]
+}
+
+
+3️⃣ Delete a Budget
+📍 Endpoint
+DELETE /api/budgets/:id
+
+📤 Example
+DELETE /api/budgets/671a2ac8d5f212b4b731aa7e
+
+📥 Expected Response
+{
+  "message": "Budget and associated transactions deleted successfully"
+}
+
+If budget not found:
+{
+  "message": "Budget not found"
+}
+
+
+
+4️⃣ Get Budget Details + Transactions
+✅ What it does:
+ Fetches a specific budget (by ID) and includes all transactions linked to it.
+
+📍 Endpoint
+GET /api/budgets/:id
+
+📤 Example
+GET /api/budgets/671a2ac8d5f212b4b731aa7e
+
+📥 Expected Response
+{
+  "message": "Budget details fetched successfully",
+  "budget": {
+    "_id": "671a2ac8d5f212b4b731aa7e",
+    "name": "October Groceries",
+    "total_amount": 50000,
+    "limit_amount": 45000,
+    "spent_amount": 20000,
+    "start_date": "2025-10-01T00:00:00.000Z",
+    "end_date": "2025-10-31T00:00:00.000Z"
+  },
+  "transactions": [
+    {
+      "_id": "671a3f08d5f212b4b731aabc",
+      "title": "Market Shopping",
+      "amount": 10000,
+      "category": "Food",
+      "date": "2025-10-10T00:00:00.000Z"
+    },
+    {
+      "_id": "671a3f60d5f212b4b731aace",
+      "title": "Snacks",
+      "amount": 5000,
+      "category": "Food",
+      "date": "2025-10-12T00:00:00.000Z"
+    }
+  ]
+}
+
+
+5️⃣ Update a Budget
+
+✅ What it does:
+ Updates an existing budget’s details (if it belongs to the logged-in user).
+
+📍 Endpoint
+PUT /api/budgets/:id
+
+📤 Request Example
+{
+  "name": "Updated October Budget",
+  "total_amount": 60000,
+  "limit_amount": 55000
+}
+
+📥 Expected Response
+{
+  "message": "Budget updated successfully",
+  "budget": {
+    "_id": "671a2ac8d5f212b4b731aa7e",
+    "name": "Updated October Budget",
+    "total_amount": 60000,
+    "limit_amount": 55000
+  }
+}
+
+
+6️⃣ Add a Transaction to a Budget
+📍 Endpoint
+POST /api/budgets/:id/transactions
+
+📤 Request Example
+{
+  "title": "Supermarket Shopping",
+  "amount": 15000,
+  "category": "Food",
+  "date": "2025-10-12",
+  "note": "Bought fruits and snacks"
+}
+
+📥 Expected Response
+{
+  "message": "Transaction added to budget successfully",
+  "transaction": {
+    "_id": "671a4056d5f212b4b731ab0f",
+    "user": "671a1fd8d5f212b4b731aa3c",
+    "budget": "671a2ac8d5f212b4b731aa7e",
+    "title": "Supermarket Shopping",
+    "amount": 15000,
+    "category": "Food",
+    "date": "2025-10-12T00:00:00.000Z",
+    "note": "Bought fruits and snacks"
+  }
+}
+
