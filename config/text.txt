@@ -15,7 +15,8 @@ Content-Type: application/json
 
 Request Body Example
 {
-  "title": "Groceries",
+  "name": "Groceries",
+  "type": "expense",
   "amount": 12000,
   "category": "Food",
   "date": "2025-10-10",
@@ -38,6 +39,38 @@ Expected Response (201 Created)
     "__v": 0
   }
 }
+
+
+{
+  "name": "Fuel Refill",
+  "type": "expense",
+  "amount": 8500,
+  "category": "Transport",
+  "date": "2025-10-12",
+  "note": "Filled the car tank at Total station",
+  "budgetId": "68f2b91d200f584d25b88d20"
+}
+
+{
+  "name": "Freelance Payment",
+  "type": "income",
+  "amount": 50000,
+  "category": "Work",
+  "date": "2025-10-11",
+  "note": "Payment from client project",
+}
+
+
+{
+  "name": "Movie Night",
+  "type": "expense",
+  "amount": 4500,
+  "category": "Entertainment",
+  "date": "2025-10-15",
+  "note": "Watched a movie with friends",
+  "budgetId": "68f2b91d200f584d25b88d20"
+}
+
 
 
 🧩 2. Get All Transactions
@@ -81,7 +114,8 @@ Expected Response (200 OK)
   "message": "Transaction fetched successfully",
   "transaction": {
     "_id": "671a00b511a9f02b3a745d31",
-    "title": "Groceries",
+    "name": "Groceries",
+    "type": "expense",
     "amount": 12000,
     "category": "Food",
     "date": "2025-10-10T00:00:00.000Z",
@@ -105,7 +139,8 @@ PUT /api/transactions/671a00b511a9f02b3a745d31
 
 Request Body Example
 {
-  "title": "Supermarket Shopping",
+  "name": "updated Groceries",
+  "type": "expense",
   "amount": 13000,
   "category": "Food",
   "note": "Updated grocery expense",
@@ -232,6 +267,22 @@ POST /api/budgets
 }
 
 
+{
+  "name": "October snacks",
+  "total_amount": 20000,
+  "limit_amount": 18000,
+  "start_date": "2025-10-17",
+  "end_date": "2025-10-31"
+}
+
+{
+  "name": "Entertainment saga",
+  "total_amount": 20000,
+  "limit_amount": 18000,
+  "start_date": "2025-11-01",
+  "end_date": "2025-11-15"
+}
+
 
  What it does:
  Fetches all budgets belonging to the authenticated user, newest first.
@@ -283,6 +334,8 @@ If budget not found:
 4️⃣ Get Budget Details + Transactions
 ✅ What it does:
  Fetches a specific budget (by ID) and includes all transactions linked to it.
+
+
 
 📍 Endpoint
 GET /api/budgets/:id
@@ -354,7 +407,9 @@ POST /api/budgets/:id/transactions
 
 📤 Request Example
 {
-  "title": "Supermarket Shopping",
+
+  "name": "Supermarket Shopping",
+  "type": "expense",
   "amount": 15000,
   "category": "Food",
   "date": "2025-10-12",

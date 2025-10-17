@@ -17,6 +17,6 @@ router.put("/transactions/:id", protectedAction, updateTransaction)
 
 router.delete("/transactions/:id", protectedAction, deleteTransaction)
 
-router.post("/transactions/budget/:budgetId", protectedAction, getTransactionsByBudget)
+router.get("/transactions/budget/:budgetId", protectedAction, getTransactionsByBudget)
 
 export default router

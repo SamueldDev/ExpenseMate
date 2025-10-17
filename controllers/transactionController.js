@@ -1,18 +1,17 @@
-
 import Transaction from "../models/TransactionModel.js";
 import Budget from "../models/BudgetModel.js";  
 import mongoose from "mongoose";
 
-
 // add a transaction
 export const addTransaction = async (req, res) => {
-    const { title, amount, category, date, note, budgetId } = req.body;
+    const { name, type, amount, category, date, note, budgetId } = req.body;
     const userId = req.user.id;
     try {
         const newTransaction = new Transaction({
             user: userId,
             budget: budgetId,
-            title,
+            name,
+            type,
             amount,
             category,
             date,
@@ -79,7 +78,7 @@ export const deleteTransaction = async (req, res) => {
 // update a transaction
 export const updateTransaction = async (req, res) => {
     const { id } = req.params;
-    const { title, amount, category, date, note, budgetId } = req.body;
+    const { name, title, amount, category, date, note, budgetId } = req.body;
     const userId = req.user.id;
     try {
         const transaction = await Transaction.findOne({ _id: id, user: userId });
@@ -96,6 +95,7 @@ export const updateTransaction = async (req, res) => {
                 await budget.save();
             }
         }
+        transaction.name = name || transaction.name;
         transaction.title = title || transaction.title;
         transaction.amount = amount || transaction.amount;
         transaction.category = category || transaction.category;
@@ -159,11 +159,11 @@ export const getTransactionsSummary = async (req, res) => {
     const userId = req.user.id;
     try {
         const incomeAgg = await Transaction.aggregate([
-            { $match: { user: mongoose.Types.ObjectId(userId), title: "income" } },
+            { $match: { user: mongoose.Types.ObjectId(userId), type: "income" } },
             { $group: { _id: null, totalIncome: { $sum: "$amount" } } }
         ]);
         const expenseAgg = await Transaction.aggregate([
-            { $match: { user: mongoose.Types.ObjectId(userId), title: "expense" } },
+            { $match: { user: mongoose.Types.ObjectId(userId), type: "expense" } },
             { $group: { _id: null, totalExpense: { $sum: "$amount" } } }
         ]);
         const totalIncome = incomeAgg[0] ? incomeAgg[0].totalIncome : 0;

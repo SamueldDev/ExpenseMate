@@ -13,7 +13,12 @@ const transactionSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Budget"
         },
-        title:{
+           name: {   // e.g. "Fuel Refill", "Movie Night"
+            type: String,
+            required: true,
+            trim: true
+        },
+            type:{
             type: String,
             enum: ["income", "expense"],
             required: true,
