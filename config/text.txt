@@ -518,3 +518,59 @@ Response
     "note": "Bought food items"
   }
 ]
+
+
+//notification
+{
+  _id: "671277db2fae45b939b02d11",
+  user: "66ffca9d8db5a4d1ef993c61",
+  title: "Budget Reminder 💰",
+  message: "Your budget <strong>Travel</strong> is 90% used. You're nearing your spending limit.",
+  type: "budget",
+  isRead: false,
+  createdAt: "2025-10-18T08:00:00.000Z"
+}
+
+
+✅ 1️⃣ GET /notifications
+{
+  "success": true,
+  "count": 3,
+  "notifications": [
+    {
+      "_id": "671277db2fae45b939b02d11",
+      "title": "Budget Reminder 💰",
+      "message": "Your budget <strong>Travel</strong> is 90% used. You're nearing your spending limit.",
+      "type": "budget",
+      "isRead": false,
+      "createdAt": "2025-10-18T08:00:00.000Z"
+    },
+    {
+      "_id": "671277c42fae45b939b02d10",
+      "title": "Budget Reminder 💰",
+      "message": "Your budget <strong>Food</strong> has been exceeded by 110%.",
+      "type": "budget",
+      "isRead": true,
+      "createdAt": "2025-10-17T08:00:00.000Z"
+    }
+  ]
+}
+
+
+✅ 2️⃣ PUT /notifications
+
+Purpose: Mark all unread notifications as read.
+🧾 Expected Response
+{
+  "success": true,
+  "message": "All notifications marked as read."
+}
+
+
+✅ 3️⃣ DELETE /notifications
+
+Purpose: Clear all notifications for the logged-in user.
+{
+  "success": true,
+  "message": "All notifications cleared."
+}

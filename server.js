@@ -8,6 +8,8 @@ import connectDB from "./config/db.js"
 import userRoutes from "./routes/userRoutes.js"
 import budgetRoutes from "./routes/budgetRoutes.js"
 import transactionRoutes from "./routes/transactionRoutes.js"
+import notificationRoutes from "./routes/notificationRoutes.js"
+
 
 const PORT = process.env.PORT || 5000   
 const app = express();
@@ -24,6 +26,7 @@ app.get("/", (req, res) => {
 app.use("/api/users", userRoutes)       
 app.use("/api", budgetRoutes)    
 app.use("/api", transactionRoutes)  
+app.use("/api", notificationRoutes)  
 
 
 app.listen(PORT, () => {  

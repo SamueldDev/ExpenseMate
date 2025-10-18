@@ -13,7 +13,7 @@ const transactionSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Budget"
         },
-           name: {   // e.g. "Fuel Refill", "Movie Night"
+           name: {  
             type: String,
             required: true,
             trim: true

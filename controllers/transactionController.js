@@ -27,6 +27,28 @@ export const addTransaction = async (req, res) => {
                 await budget.save();
             }
         }
+
+          // 📊 Calculate percentage used
+        const budget = await Budget.findById(budgetId);
+        const percentUsed = (budget.spent_amount / budget.limit_amount) * 100;
+
+        // ⚠️ Send notification if nearing/exceeding limit
+        if (percentUsed >= 80 && percentUsed < 100) {
+          await createNotification(
+            userId,
+            "Budget Alert ⚠️",
+            `Your budget "${budget.name}" is ${percentUsed.toFixed(0)}% used. You're nearing your spending limit.`,
+            "budget"
+          );
+        } else if (percentUsed >= 100) {
+          await createNotification(
+            userId,
+            "Budget Exceeded 🚨",
+            `Your budget "${budget.name}" has been exceeded by ${percentUsed.toFixed(0)}%.`,
+            "budget"
+          );
+        }
+
         res.status(201).json({
             message: "Transaction added successfully",
             transaction: newTransaction
