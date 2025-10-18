@@ -159,6 +159,8 @@ export const getTransactionsSummary = async (req, res) => {
     const userId = req.user.id;
     try {
         const incomeAgg = await Transaction.aggregate([
+            // { $match: { user: mongoose.Types.ObjectId(userId), type: "income" } },
+
             { $match: { user: mongoose.Types.ObjectId(userId), type: "income" } },
             { $group: { _id: null, totalIncome: { $sum: "$amount" } } }
         ]);
@@ -175,3 +177,133 @@ export const getTransactionsSummary = async (req, res) => {
     }
 };
 
+
+
+
+// summary total(income, expense and balance)
+export const getSummary = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const summary = await Transaction.aggregate([
+
+    { $match: { user: mongoose.Types.ObjectId.createFromHexString(userId) } },
+
+      {
+        $group: {
+          _id: "$type",
+          total: { $sum: "$amount" }
+        }
+      }
+    ]);
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    summary.forEach((item) => {
+      if (item._id === "income") totalIncome = item.total;
+      if (item._id === "expense") totalExpense = item.total;
+    });
+
+    const balance = totalIncome - totalExpense;
+
+    res.status(200).json({ totalIncome, totalExpense, balance });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch summary", error: error.message });
+  }
+};
+
+
+
+// monthly chart data
+export const getMonthlyStats = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const stats = await Transaction.aggregate([
+
+    { $match: { user: mongoose.Types.ObjectId.createFromHexString(userId) } },
+
+      {
+        $group: {
+          _id: { month: { $month: "$date" }, type: "$type" },
+          total: { $sum: "$amount" }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.month",
+          data: { $push: { type: "$_id.type", total: "$total" } }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    // Formatted months for frontend readability
+    const result = stats.map((item) => ({
+      month: new Date(2025, item._id - 1).toLocaleString("default", { month: "short" }),
+      income: item.data.find((d) => d.type === "income")?.total || 0,
+      expense: item.data.find((d) => d.type === "expense")?.total || 0
+    }));
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch monthly stats", error: error.message });
+  }
+};
+
+
+//category chart data
+export const getCategoryStats = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const categoryStats = await Transaction.aggregate([
+
+    { $match: { user: mongoose.Types.ObjectId.createFromHexString(userId) } },
+
+      {
+        $group: {
+          _id: { category: "$category", type: "$type" },
+          total: { $sum: "$amount" }
+        }
+      },
+      { $sort: { "_id.category": 1 } }
+    ]);
+
+    // Format for easy chart consumption
+    const formatted = categoryStats.map((item) => ({
+      category: item._id.category || "Uncategorized",
+      type: item._id.type,
+      total: item.total
+    }));
+
+    res.status(200).json(formatted);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch category stats", error: error.message });
+  }
+};
+
+
+// filter transactions by date or/and category
+export const getTransactionCat = async (req, res) => {
+  const userId = req.user.id;
+  const { from, to, category } = req.query;
+
+  const filter = { user: userId };
+
+  if (from && to) {
+    filter.date = { $gte: new Date(from), $lte: new Date(to) };
+  }
+
+  if (category) {
+    filter.category = category;
+  }
+
+  try {
+    const transactions = await Transaction.find(filter).sort({ date: -1 });
+    res.status(200).json(transactions);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch transactions", error: error.message });
+  }
+};

@@ -1,5 +1,4 @@
 
-
 import express from "express"
 import dotenv from "dotenv"
 dotenv.config({ quiet: true })
@@ -15,7 +14,7 @@ const app = express();
 connectDB();  
 
 app.use(cors());
-app.use(express.json());       
+app.use(express.json());         
 
 // routes
 app.get("/", (req, res) => {    
@@ -23,11 +22,11 @@ app.get("/", (req, res) => {
 })
 
 app.use("/api/users", userRoutes)       
-app.use("/api", budgetRoutes) 
-app.use("/api", transactionRoutes) 
+app.use("/api", budgetRoutes)    
+app.use("/api", transactionRoutes)  
 
 
-app.listen(PORT, () => {
+app.listen(PORT, () => {  
     console.log(`server running on http://localhost:${PORT}`)
 })
 

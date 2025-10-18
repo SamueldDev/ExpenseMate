@@ -5,7 +5,7 @@
 
 // for transaction
 
-🧩 1. Add a Transaction
+1. Add a Transaction
 Endpoint
 POST /api/transactions
 
@@ -51,16 +51,19 @@ Expected Response (201 Created)
   "budgetId": "68f2b91d200f584d25b88d20"
 }
 
+
+
+// add a budget
+
 {
-  "name": "Freelance Payment",
-  "type": "income",
-  "amount": 50000,
-  "category": "Work",
-  "date": "2025-10-11",
-  "note": "Payment from client project",
+  "name": "Entertainment saga",
+  "total_amount": 20000,
+  "limit_amount": 18000,
+  "start_date": "2025-11-01",
+  "end_date": "2025-11-15"
 }
 
-
+// add transaction
 {
   "name": "Movie Night",
   "type": "expense",
@@ -71,9 +74,35 @@ Expected Response (201 Created)
   "budgetId": "68f2b91d200f584d25b88d20"
 }
 
+{
+  "name": "Freelance Payment",
+  "type": "income",
+  "amount": 50000,
+  "category": "Work",
+  "date": "2025-10-11",
+  "note": "Payment from client project",
+}
+
+  /api/users/login
+
+  /api/transactions
+
+  /api/transactions/summary
+  /api/transactions/monthly
+  /api/transactions/categories
+
+http://localhost:3000/api/transactions/summary
+http://localhost:3000/api/transactions/monthly
+http://localhost:3000/api/transactions/categories
+
+http://localhost:3000/api/transactions?category=Work
+
+http://localhost:3000/api/transactions?category=Entertainment
 
 
-🧩 2. Get All Transactions
+
+
+ 2. Get All Transactions
 Endpoint
 GET /api/transactions
 
@@ -102,7 +131,7 @@ Expected Response (200 OK)
 }
 
 
-🧩 3. Get a Single Transaction
+3. Get a Single Transaction
 Endpoint
 GET /api/transactions/:id
 
@@ -130,7 +159,7 @@ If transaction doesn’t exist:
 }
 
 
-🧩 4. Update a Transaction
+4. Update a Transaction
 Endpoint
 PUT /api/transactions/:id
 
@@ -162,7 +191,7 @@ Expected Response (200 OK)
 }
 
 
-🧩 5. Delete a Transaction
+5. Delete a Transaction
 Endpoint
 DELETE /api/transactions/:id
 
@@ -180,7 +209,7 @@ If transaction doesn’t exist:
 }
 
 
-🧩 6. Get Transactions by Budget
+6. Get Transactions by Budget
 Endpoint
 GET /api/transactions/budget/:budgetId
 
@@ -210,7 +239,7 @@ Expected Response (200 OK)
 }
 
 
-🧩 7. Get Transaction Summary
+7. Get Transaction Summary
 Endpoint
 GET /api/transactions/summary
 
@@ -236,10 +265,10 @@ If no transactions yet:
 
 
 // for budget
-📍 Endpoint
+Endpoint
 POST /api/budgets
 
-📤 Request Body Example
+Request Body Example
 {
   "name": "October Groceries",
   "total_amount": 50000,
@@ -287,10 +316,10 @@ POST /api/budgets
  What it does:
  Fetches all budgets belonging to the authenticated user, newest first.
 
-📍 Endpoint
+Endpoint
 GET /api/budgets
 
-📥 Expected Response
+Expected Response
 {
   "message": "Budgets fetched successfully",
   "budgets": [
@@ -312,14 +341,14 @@ GET /api/budgets
 }
 
 
-3️⃣ Delete a Budget
-📍 Endpoint
+Delete a Budget
+Endpoint
 DELETE /api/budgets/:id
 
-📤 Example
+Example
 DELETE /api/budgets/671a2ac8d5f212b4b731aa7e
 
-📥 Expected Response
+Expected Response
 {
   "message": "Budget and associated transactions deleted successfully"
 }
@@ -331,19 +360,19 @@ If budget not found:
 
 
 
-4️⃣ Get Budget Details + Transactions
-✅ What it does:
+Get Budget Details + Transactions
+What it does:
  Fetches a specific budget (by ID) and includes all transactions linked to it.
 
 
 
-📍 Endpoint
+Endpoint
 GET /api/budgets/:id
 
-📤 Example
+Example
 GET /api/budgets/671a2ac8d5f212b4b731aa7e
 
-📥 Expected Response
+Expected Response
 {
   "message": "Budget details fetched successfully",
   "budget": {
@@ -374,22 +403,22 @@ GET /api/budgets/671a2ac8d5f212b4b731aa7e
 }
 
 
-5️⃣ Update a Budget
+Update a Budget
 
-✅ What it does:
+What it does:
  Updates an existing budget’s details (if it belongs to the logged-in user).
 
-📍 Endpoint
+Endpoint
 PUT /api/budgets/:id
 
-📤 Request Example
+Request Example
 {
   "name": "Updated October Budget",
   "total_amount": 60000,
   "limit_amount": 55000
 }
 
-📥 Expected Response
+Expected Response
 {
   "message": "Budget updated successfully",
   "budget": {
@@ -401,11 +430,11 @@ PUT /api/budgets/:id
 }
 
 
-6️⃣ Add a Transaction to a Budget
-📍 Endpoint
+Add a Transaction to a Budget
+Endpoint
 POST /api/budgets/:id/transactions
 
-📤 Request Example
+Request Example
 {
 
   "name": "Supermarket Shopping",
@@ -416,7 +445,7 @@ POST /api/budgets/:id/transactions
   "note": "Bought fruits and snacks"
 }
 
-📥 Expected Response
+Expected Response
 {
   "message": "Transaction added to budget successfully",
   "transaction": {
@@ -431,3 +460,61 @@ POST /api/budgets/:id/transactions
   }
 }
 
+
+
+Get Summary
+
+GET http://localhost:5000/api/transactions/summary
+
+Response
+
+{
+  "totalIncome": 80000,
+  "totalExpense": 45000,
+  "balance": 35000
+}
+
+
+Get Monthly Chart Data
+
+GET http://localhost:5000/api/transactions/monthly
+
+Response
+
+[
+  { "month": "Jan", "income": 120000, "expense": 80000 },
+  { "month": "Feb", "income": 100000, "expense": 60000 }
+]
+
+Get Category Chart Data
+
+GET http://localhost:5000/api/transactions/categories
+
+Response
+
+[
+  { "category": "Food", "type": "expense", "total": 15000 },
+  { "category": "Transport", "type": "expense", "total": 7000 },
+  { "category": "Salary", "type": "income", "total": 50000 }
+]
+
+Get Filtered Transactions
+
+GET
+
+http://localhost:5000/api/transactions?from=2025-10-01&to=2025-10-31&category=Food
+
+
+Response
+
+[
+  {
+    "_id": "6711a4f0b25a6f3f2c7f1245",
+    "name": "Groceries",
+    "type": "expense",
+    "amount": 12000,
+    "category": "Food",
+    "date": "2025-10-10T00:00:00.000Z",
+    "note": "Bought food items"
+  }
+]
