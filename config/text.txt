@@ -2,6 +2,27 @@
 
 // api calls
 
+// register a user
+
+/api/users/register
+
+{
+  "name": "samuel",
+  "email: "samuelf8908@gmail.com"
+  "password": "samuel123456"
+}
+
+//log a user in
+
+/api/users/login
+
+{
+  "email: "samuelf8908@gmail.com"
+  "password": "samuel123456"
+}
+
+/api/users/login
+
 
 // for transaction
 
@@ -55,24 +76,41 @@ Expected Response (201 Created)
 
 // add a budget
 
+/budgets
+
 {
   "name": "Entertainment saga",
-  "total_amount": 20000,
-  "limit_amount": 18000,
-  "start_date": "2025-11-01",
-  "end_date": "2025-11-15"
+  "total_amount": 60000,
+  "limit_amount": 58000,
+  "start_date": "2025-10-19",
+  "end_date": "2025-10-31"
 }
 
 // add transaction
+
+/transactions
+
+{
+  "name": "Dance concert",
+  "type": "expense",
+  "amount": 55000,
+  "category": "Entertainment",
+  "date": "2025-10-15",
+  "note": "attended an exciting concerrt",
+  "budgetId": "68f2b91d200f584d25b88d20"
+}
+
 {
   "name": "Movie Night",
   "type": "expense",
-  "amount": 4500,
+  "amount": 4000,
   "category": "Entertainment",
-  "date": "2025-10-15",
-  "note": "Watched a movie with friends",
+  "date": "2025-10-19",
+  "note": "Watched a movie alone",
   "budgetId": "68f2b91d200f584d25b88d20"
 }
+
+
 
 {
   "name": "Freelance Payment",
@@ -532,7 +570,11 @@ Response
 }
 
 
-✅ 1️⃣ GET /notifications
+GET /notifications
+
+/notifications
+
+Response
 {
   "success": true,
   "count": 3,
@@ -557,20 +599,28 @@ Response
 }
 
 
-✅ 2️⃣ PUT /notifications
+PUT /notifications
 
+/notifications
+Response
 Purpose: Mark all unread notifications as read.
-🧾 Expected Response
+
 {
   "success": true,
   "message": "All notifications marked as read."
 }
 
 
-✅ 3️⃣ DELETE /notifications
+DELETE /notifications
 
+/notifications
+Response
 Purpose: Clear all notifications for the logged-in user.
 {
   "success": true,
   "message": "All notifications cleared."
 }
+
+
+GET http://localhost:3000/api/test-budget-reminder
+

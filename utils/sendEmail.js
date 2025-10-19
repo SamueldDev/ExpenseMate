@@ -3,7 +3,7 @@
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 
-dotenv.config();
+dotenv.config({ quiet: true});
 
 // Create transporter for Gmail SMTP
 const transporter = nodemailer.createTransport({
@@ -14,6 +14,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// helper function
 const sendBudgetReminder = async (email, name, message) => {
   const mailOptions = {
     from: `"ExpenseMate" <${process.env.GMAIL_USER}>`,

@@ -5,18 +5,33 @@ import Notification from "../models/NotificationModel.js";
 //  Create a notification
 export const createNotification = async (userId, title, message, type = "general") => {
   try {
-    const newNotification = new Notification({
+
+    // check if similar notification exists recently (within 1 day)
+    const existing = await Notification.findOne({
       user: userId,
       title,
       message,
       type,
+      createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
     });
-    await newNotification.save();
-    return newNotification;
+
+    if (existing) {
+      console.log(` Skipping duplicate notification for user ${userId}`);
+      return existing; // prevent duplicate
+    }
+
+    const notification = new Notification({ user: userId, title, message, type });
+    await notification.save();
+
+    console.log(` Notification created for ${userId}`);
+    return notification;
+  
   } catch (error) {
     console.error("Error creating notification:", error);
   }
 };
+
+
 
 //  Get all notifications for a user
 export const getUserNotifications = async (req, res) => {
@@ -39,6 +54,9 @@ export const markAsRead = async (req, res) => {
     res.status(500).json({ message: "Error updating notification", error });
   }
 };
+
+
+
 
 //  Clear all notifications
 export const clearAllNotifications = async (req, res) => {

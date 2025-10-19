@@ -1,6 +1,7 @@
 import Transaction from "../models/TransactionModel.js";
 import Budget from "../models/BudgetModel.js";  
 import mongoose from "mongoose";
+import { createNotification } from "../controllers/notificationController.js"
 
 // add a transaction
 export const addTransaction = async (req, res) => {
@@ -28,11 +29,11 @@ export const addTransaction = async (req, res) => {
             }
         }
 
-          // 📊 Calculate percentage used
+          //  Calculate percentage used
         const budget = await Budget.findById(budgetId);
         const percentUsed = (budget.spent_amount / budget.limit_amount) * 100;
 
-        // ⚠️ Send notification if nearing/exceeding limit
+        //  Send notification if nearing/exceeding limit
         if (percentUsed >= 80 && percentUsed < 100) {
           await createNotification(
             userId,

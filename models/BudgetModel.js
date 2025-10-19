@@ -34,6 +34,20 @@ const budgetSchema = new mongoose.Schema(
             type: Date,
             required: true
         },
+
+        // reminder flag
+        sent80PercentAlert: { 
+            type: Boolean, 
+            default: false 
+        },
+        sentExceededAlert: { 
+            type: Boolean, 
+            default: false 
+        },
+        sentEndDateAlert: { 
+            type: Boolean, 
+            default: false 
+        },
     },
     { timestamps: true }
 )
