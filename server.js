@@ -21,12 +21,12 @@ app.use(express.json());
 
 // routes
 app.get("/", (req, res) => {    
-    res.send(" expenseMate server is live")  
+    res.send(" expenseMate server is live")    
 })
 
-app.use("/api/users", userRoutes)       
+app.use("/api/users", userRoutes)         
 app.use("/api", budgetRoutes)    
-app.use("/api", transactionRoutes)    
+app.use("/api", transactionRoutes)      
 app.use("/api", notificationRoutes)      
 app.use("/api", testBudgetRoutes)    
 

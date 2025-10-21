@@ -2,14 +2,17 @@
 
 
 import bcrypt from "bcrypt"
-import json from "jsonwebtoken"
+// import json from "jsonwebtoken"
+
+import jwt from "jsonwebtoken"
+
 import User from "../models/UserModel.js"
 
 import dotenv from "dotenv"
 dotenv.config({ quiet: true })
 
 const generateToken = (user) => {
-    return json.sign({ id: user._id, email: user.email}, process.env.JWT_SECRET,{ expiresIn: "7d"})
+    return jwt.sign({ id: user._id, name: user.name, email: user.email}, process.env.JWT_SECRET,{ expiresIn: "7d"})
 }
 
 // register a user
