@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 })
 
 app.use("/api/users", userRoutes)         
-app.use("/api", budgetRoutes)    
+app.use("/api", budgetRoutes)       
 app.use("/api", transactionRoutes)      
 app.use("/api", notificationRoutes)      
 app.use("/api", testBudgetRoutes)    

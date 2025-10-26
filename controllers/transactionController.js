@@ -4,61 +4,129 @@ import mongoose from "mongoose";
 import { createNotification } from "../controllers/notificationController.js"
 
 // add a transaction
+// export const addTransaction = async (req, res) => {
+//     const { name, type, amount, category, date, note, budgetId } = req.body;
+//     const userId = req.user.id;
+//     try {
+//         const newTransaction = new Transaction({
+//             user: userId,
+//             budget: budgetId,
+//             name,
+//             type,
+//             amount,
+//             category,
+//             date,
+//             note
+//         });
+//         await newTransaction.save();
+
+//         // if budgetId is provided, update the spent_amount in the corresponding budget
+//         if (budgetId) {
+//             const budget = await Budget.findById(budgetId);
+//             if (budget) {
+//                 budget.spent_amount += amount;
+//                 await budget.save();
+//             }
+//         }
+
+//           //  Calculate percentage used
+//         const budget = await Budget.findById(budgetId);
+//         const percentUsed = (budget.spent_amount / budget.limit_amount) * 100;
+
+//         //  Send notification if nearing/exceeding limit
+//         if (percentUsed >= 80 && percentUsed < 100) {
+//           await createNotification(
+//             userId,
+//             "Budget Alert ⚠️",
+//             `Your budget "${budget.name}" is ${percentUsed.toFixed(0)}% used. You're nearing your spending limit.`,
+//             "budget"
+//           );
+//         } else if (percentUsed >= 100) {
+//           await createNotification(
+//             userId,
+//             "Budget Exceeded 🚨",
+//             `Your budget "${budget.name}" has been exceeded by ${percentUsed.toFixed(0)}%.`,
+//             "budget"
+//           );
+//         }
+
+//         res.status(201).json({
+//             message: "Transaction added successfully",
+//             transaction: newTransaction
+//         });
+//     }
+//     catch (err) {
+//         res.status(500).json({ message: "Failed to add transaction", error: err.message });
+//     }
+// };
+
+
+
+// add transaction
+// add a transaction
 export const addTransaction = async (req, res) => {
-    const { name, type, amount, category, date, note, budgetId } = req.body;
-    const userId = req.user.id;
-    try {
-        const newTransaction = new Transaction({
-            user: userId,
-            budget: budgetId,
-            name,
-            type,
-            amount,
-            category,
-            date,
-            note
-        });
-        await newTransaction.save();
+  const { name, type, amount, category, date, note, budgetId } = req.body;
+  const userId = req.user.id;
 
-        // if budgetId is provided, update the spent_amount in the corresponding budget
-        if (budgetId) {
-            const budget = await Budget.findById(budgetId);
-            if (budget) {
-                budget.spent_amount += amount;
-                await budget.save();
-            }
-        }
+  try {
+    const newTransaction = new Transaction({
+      user: userId,
+      budget: type === "expense" ? budgetId : null, // only attach budget if expense
+      name,
+      type,
+      amount,
+      category,
+      date,
+      note,
+    });
 
-          //  Calculate percentage used
-        const budget = await Budget.findById(budgetId);
+    await newTransaction.save();
+
+    // only update budget if transaction type is expense and budgetId exists
+    if (type === "expense" && budgetId) {
+      const budget = await Budget.findById(budgetId);
+      if (budget) {
+        budget.spent_amount += amount;
+        await budget.save();
+
+        // calculate percentage used
         const percentUsed = (budget.spent_amount / budget.limit_amount) * 100;
 
-        //  Send notification if nearing/exceeding limit
+        // send notifications if nearing/exceeding limit
         if (percentUsed >= 80 && percentUsed < 100) {
           await createNotification(
             userId,
             "Budget Alert ⚠️",
-            `Your budget "${budget.name}" is ${percentUsed.toFixed(0)}% used. You're nearing your spending limit.`,
+            `Your budget "${budget.name}" is ${percentUsed.toFixed(
+              0
+            )}% used. You're nearing your spending limit.`,
             "budget"
           );
         } else if (percentUsed >= 100) {
           await createNotification(
             userId,
             "Budget Exceeded 🚨",
-            `Your budget "${budget.name}" has been exceeded by ${percentUsed.toFixed(0)}%.`,
+            `Your budget "${budget.name}" has been exceeded by ${percentUsed.toFixed(
+              0
+            )}%.`,
             "budget"
           );
         }
+      }
+    }
 
-        res.status(201).json({
-            message: "Transaction added successfully",
-            transaction: newTransaction
-        });
-    }
-    catch (err) {
-        res.status(500).json({ message: "Failed to add transaction", error: err.message });
-    }
+    res.status(201).json({
+      message: "Transaction added successfully",
+      transaction: newTransaction,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to add transaction", error: err.message });
+  }
 };
+
+
 
 
 // get all transactions for a user
